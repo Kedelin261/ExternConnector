@@ -245,7 +245,7 @@ public class LinearApiClient {
     private Map<String, String> fetchWorkflowStates(String teamId) {
         log.debug("Fetching Linear workflow states for team {}", teamId);
         String query = """
-            query GetWorkflowStates($teamId: String!) {
+            query GetWorkflowStates($teamId: ID!) {
               workflowStates(filter: { team: { id: { eq: $teamId } } }) {
                 nodes {
                   id

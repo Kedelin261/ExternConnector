@@ -12,3 +12,4 @@ target/
 .mvn/
 mvnw
 mvnw.cmd
+ecosystem.config.cjs

@@ -1,0 +1,35 @@
+// ecosystem.config.cjs — PM2 process config
+// DO NOT commit real secrets here. Copy from .env.example and fill in values.
+// Run: cp .env.example .env && edit .env, then source it before pm2 start.
+module.exports = {
+  apps: [
+    {
+      name: 'externconnector',
+      script: 'java',
+      args: [
+        '-Xmx512m',
+        '-Xms256m',
+        '-XX:+UseG1GC',
+        '-jar',
+        'target/linear-clickup-sync-1.0.0.jar'
+      ],
+      env: {
+        DATABASE_URL:             process.env.DATABASE_URL            || 'jdbc:postgresql://localhost:5432/externconnector?user=externconnector&password=externconnector123',
+        LINEAR_API_KEY:           process.env.LINEAR_API_KEY          || '',
+        LINEAR_WEBHOOK_SECRET:    process.env.LINEAR_WEBHOOK_SECRET   || '',
+        LINEAR_TEAM_ID:           process.env.LINEAR_TEAM_ID          || '',
+        CLICKUP_API_KEY:          process.env.CLICKUP_API_KEY         || '',
+        CLICKUP_WEBHOOK_SECRET:   process.env.CLICKUP_WEBHOOK_SECRET  || '',
+        CLICKUP_WORKSPACE_ID:     process.env.CLICKUP_WORKSPACE_ID    || '',
+        CLICKUP_LIST_ID:          process.env.CLICKUP_LIST_ID         || '',
+        PORT:                     '8080',
+        BASE_URL:                 process.env.BASE_URL                || 'http://localhost:8080'
+      },
+      watch: false,
+      instances: 1,
+      exec_mode: 'fork',
+      autorestart: true,
+      max_restarts: 5
+    }
+  ]
+}

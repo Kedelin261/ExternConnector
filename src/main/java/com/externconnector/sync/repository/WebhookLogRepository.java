@@ -1,6 +1,8 @@
 package com.externconnector.sync.repository;
 
 import com.externconnector.sync.entity.WebhookLog;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +13,8 @@ import java.util.Optional;
 
 @Repository
 public interface WebhookLogRepository extends JpaRepository<WebhookLog, Long> {
+
+    Page<WebhookLog> findAllByOrderByReceivedAtDesc(Pageable pageable);
 
     boolean existsByEventIdAndSource(String eventId, WebhookLog.Platform source);
 
