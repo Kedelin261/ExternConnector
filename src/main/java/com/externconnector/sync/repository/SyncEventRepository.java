@@ -3,6 +3,7 @@ package com.externconnector.sync.repository;
 import com.externconnector.sync.entity.SyncEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,7 @@ import java.util.List;
 @Repository
 public interface SyncEventRepository extends JpaRepository<SyncEvent, Long> {
 
+    @EntityGraph(attributePaths = {"taskMapping"})
     Page<SyncEvent> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     List<SyncEvent> findByTaskMappingIdOrderByCreatedAtDesc(Long taskMappingId);

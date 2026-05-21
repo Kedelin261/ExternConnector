@@ -39,27 +39,32 @@ public class WebhookAuditService {
 
     /**
      * Log a received webhook. Always persists regardless of processing outcome.
+     * If event_id + source already exists (duplicate delivery), returns the existing row.
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public WebhookLog logWebhook(String eventId, WebhookLog.Platform source,
                                   String eventType, Object payload, boolean signatureValid) {
-        String payloadJson;
-        try {
-            payloadJson = payload instanceof String s ? s : objectMapper.writeValueAsString(payload);
-        } catch (Exception e) {
-            payloadJson = "{}";
-        }
+        // Guard against duplicate-key on idempotent retries
+        return webhookLogRepository.findByEventIdAndSource(eventId, source)
+                .orElseGet(() -> {
+                    String payloadJson;
+                    try {
+                        payloadJson = payload instanceof String s ? s : objectMapper.writeValueAsString(payload);
+                    } catch (Exception e) {
+                        payloadJson = "{}";
+                    }
 
-        WebhookLog wl = WebhookLog.builder()
-                .eventId(eventId)
-                .source(source)
-                .eventType(eventType)
-                .payload(payloadJson)
-                .signatureValid(signatureValid)
-                .processed(false)
-                .build();
+                    WebhookLog wl = WebhookLog.builder()
+                            .eventId(eventId)
+                            .source(source)
+                            .eventType(eventType)
+                            .payload(payloadJson)
+                            .signatureValid(signatureValid)
+                            .processed(false)
+                            .build();
 
-        return webhookLogRepository.save(wl);
+                    return webhookLogRepository.save(wl);
+                });
     }
 
     /**

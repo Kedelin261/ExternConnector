@@ -3,8 +3,8 @@ builder = "nixpacks"
 buildCommand = "mvn -q -DskipTests package"
 
 [deploy]
-startCommand = "java -Xmx512m -Xms256m -XX:+UseG1GC -jar target/linear-clickup-sync-1.0.0.jar"
+startCommand = "java -Xmx512m -Xms256m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -jar target/linear-clickup-sync-1.0.0.jar"
 healthcheckPath = "/actuator/health"
-healthcheckTimeout = 60
+healthcheckTimeout = 120
 restartPolicyType = "on_failure"
-restartPolicyMaxRetries = 3
+restartPolicyMaxRetries = 5

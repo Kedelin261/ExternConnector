@@ -27,10 +27,14 @@ public record SyncEventResponse(
         String linearId = null;
         String clickupId = null;
         Long mappingId = null;
-        if (e.getTaskMapping() != null) {
-            mappingId = e.getTaskMapping().getId();
-            linearId  = e.getTaskMapping().getLinearIssueId();
-            clickupId = e.getTaskMapping().getClickupTaskId();
+        try {
+            if (e.getTaskMapping() != null) {
+                mappingId = e.getTaskMapping().getId();
+                linearId  = e.getTaskMapping().getLinearIssueId();
+                clickupId = e.getTaskMapping().getClickupTaskId();
+            }
+        } catch (Exception ignored) {
+            // Hibernate proxy not initialized — leave as null
         }
         return new SyncEventResponse(
                 e.getId(),
